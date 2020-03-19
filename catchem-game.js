@@ -22,18 +22,15 @@ var config = {
 
 
 var score = 0;
-var text1;
-var text2;
-var text3;
+var startText, text1, text2, text3;
 var pointsCount = 0;
 var errorCount = 0;
-var pointsText;
-var errorText;
+var pointsText, errorText;
 var randomLetter;
 var letters;
-var dropSpeed = 500;
+var dropSpeed = 120;
 var letterXpos;
-var lettersList;
+var lettersList = [];
 
 
 
@@ -54,6 +51,10 @@ function create() {
     this.cameras.main.setBackgroundColor('#142850');
 
     // UI
+    startText = this.add.text(180, 220, 'Press SPACE to start...', {
+        font: 'bold 42px Tahoma',
+        fill: '#AFA'
+    });
     pointsText = this.add.text(10, 10, 'Points: x', {
         font: "12px Verdana",
         fill: '#AFA'
@@ -72,34 +73,41 @@ function create() {
         font: "12px Verdana",
         fill: '#f1f9f9'
     });
-    text3 = this.add.text(10, 540, 'Last input: ', {
+    text3 = this.add.text(10, 540, '', {
         font: "14px Verdana",
         fill: '#f1f9f9'
     });
 
-    letterXpos = Math.floor(Math.random() * 600) + 100;
+
+    this.input.keyboard.on('keydown', function (event) {
+        if (event.keyCode === Phaser.Input.Keyboard.KeyCodes.SPACE) {
+            startText.destroy();
+        }
+    });
 
     // dropping random letter on the scene
+    letterXpos = Math.floor(Math.random() * 600) + 100;
     randomLetter = this.add.text(letterXpos, 0, getRandomLetter().toUpperCase(), {
-        fontSize: '42px',
-        fontFamily: 'Tahoma',
+        font: 'bold 32px Tahoma',
         fill: '#FFA'
     });
 
+    lettersList.push(randomLetter);
 
-    this.physics.world.enable(randomLetter);
 
-    randomLetter.body.velocity.setTo(0, dropSpeed);
-    randomLetter.body.setMaxVelocity(0, dropSpeed);
-    randomLetter.body.setCollideWorldBounds(true);
+    this.physics.world.enable(lettersList);
+
+    lettersList[0].body.velocity.setTo(0, dropSpeed);
+    lettersList[0].body.setMaxVelocity(0, dropSpeed);
+    lettersList[0].body.setCollideWorldBounds(true);
 
 
     // keyboard events (input)
     this.input.keyboard.on('keydown', function (event) {
         let uppercaseInput = String.fromCharCode(event.keyCode).toUpperCase();
         if (event.keyCode >= 48 && event.keyCode <= 90) {
-            (uppercaseInput == randomLetter.text[0]) ? pointsCount++ : errorCount++;
-            text3.setText('Last input: ' + uppercaseInput);
+            (uppercaseInput == lettersList[0].text[0]) ? pointsCount++ : errorCount++;
+            //text3.setText('Last input: ' + uppercaseInput);
         }
     });
 
@@ -110,7 +118,7 @@ function create() {
 // ================ *UPDATE* FUNCTION
 function update() {
 
-    text2.setText('letter y pos: ' + Math.floor(randomLetter.body.y));
+    //text2.setText('letter y pos: ' + Math.floor(randomLetter.body.y));
     pointsText.setText('Points: ' + pointsCount);
     errorText.setText('Errors: ' + errorCount);
 
@@ -123,6 +131,11 @@ function update() {
 // ================ OTHER METHODS
 function getRandomLetter() {
     let characters = 'abcdefghijklmnopqrstuvwxyz';
-
     return characters.charAt(Math.floor(Math.random() * characters.length));
+}
+
+
+
+function spawnLetter() {
+
 }
