@@ -82,8 +82,12 @@ function create() {
     this.input.keyboard.on('keydown', function (event) {
         if (event.keyCode === Phaser.Input.Keyboard.KeyCodes.SPACE) {
             startText.destroy();
+
+            
+
         }
-    });
+    }, this);
+
 
     // dropping random letter on the scene
     letterXpos = Math.floor(Math.random() * 600) + 100;
@@ -106,10 +110,15 @@ function create() {
     this.input.keyboard.on('keydown', function (event) {
         let uppercaseInput = String.fromCharCode(event.keyCode).toUpperCase();
         if (event.keyCode >= 48 && event.keyCode <= 90) {
-            (uppercaseInput == lettersList[0].text[0]) ? pointsCount++ : errorCount++;
+            if (uppercaseInput == lettersList[0].text[0]) {
+                pointsCount++
+                lettersList[0].destroy();
+            } else {
+                errorCount++;
+            }
             //text3.setText('Last input: ' + uppercaseInput);
         }
-    });
+    }, this);
 
 }
 // ================ END OF *CREATE* FUNCTION
@@ -121,6 +130,8 @@ function update() {
     //text2.setText('letter y pos: ' + Math.floor(randomLetter.body.y));
     pointsText.setText('Points: ' + pointsCount);
     errorText.setText('Errors: ' + errorCount);
+
+
 
 
 }
